@@ -1,62 +1,4 @@
-function randomString(length) {
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    for ( var i = 0; i < length; i++ )
-        result += characters.charAt(Math.floor(Math.random() * characters.length));
-    return result;
-};
-
-const promisize = (value) => {
-    if (typeof value?.then === "function")
-        return value;
-    if(typeof value === "function")
-        return async (...args) => value(...args);
-    else 
-        return async () => value;
-}
-
-const createDependencyGroup = (name, ...dependencies) => container => (container
-    .inject(name, async () => {
-        let dependents = [];
-        let onFinish = [];
-        let waiting = false;
-
-        return {
-            join() {
-                if(waiting) 
-                    return new Promise(resolve => onFinish.push(resolve));
-
-                waiting = true;
-                return new Promise(resolve => {
-                    let deps = dependents;
-                    dependents = null;
-
-                    if(deps.length === 0)
-                        resolve();
-                    else
-                        onFinish.push(resolve);
-                })
-            },
-            createDependency(name) {
-                if(waiting)
-                    throw "Already waiting";
-
-                dependents.push(name);
-            },
-            finishDependency(name) {
-                dependents = dependents.filter(x => x !== name);
-                if(waiting && dependents.length == 0)
-                    onFinish.forEach(x=>x());
-            }
-    }
-    })
-    .run(name, async ({dependsOn, get}) => {
-        await dependsOn(...dependencies);
-        const target = await get(name);
-        await target.join();
-    })
-)
-
+const { randomString, promisize } = require("./helpers");
 
 const createContainer = async (...configurations) => {
     let _loaders = {}
@@ -66,7 +8,8 @@ const createContainer = async (...configurations) => {
 
     let _entries = {}
     let initialized = false;
-    
+    let _dependencies = {};
+
     const container = {
         async get(key) {
             if(key in _entries)
@@ -112,8 +55,15 @@ const createContainer = async (...configurations) => {
             _runners[name] = promisize(runner);
             return container;
         },
-        dependencyGroup(name) {
-            return createDependencyGroup(name)(container);
+        dependency(group, runner) {
+            if(!(group in _dependencies))
+                _dependencies[group] = [];
+            _dependencies[group].push(runner);
+
+            return container;
+        },
+        dependencyGroup(group) {
+            return container.run(group, () => {});
         }
     }
 
@@ -124,7 +74,10 @@ const createContainer = async (...configurations) => {
     let _runQueue = [];
     let _ran = [];
 
-    const doRunner = async (name, runner) => {
+    const doRunner = async (name) => {
+        const runner = _runners[name];
+        if(!runner)
+            throw `Runner '${name}' does not exist`;
         if(_ran.includes(name))
             return;
 
@@ -132,27 +85,18 @@ const createContainer = async (...configurations) => {
             throw "Circular runner dependency: " + _runQueue.join(" -> ") + " -> " + name;
         _runQueue.push(name);
 
-        await runner({
-            ...container,
-            dependsOn: async (...names) => {
-                for(const name of names) {
-                    if(!(name in _runners))
-                        throw `Dependency '${name}' of runner ${name} does not exist.`
-                    await doRunner(name, _runners[name]);
-                }
-            }
-        });
+        if(name in _dependencies) 
+            for(const dep of _dependencies[name])
+                await doRunner(dep);
+        
+        await runner(container);
 
         _ran.push(name);
         _runQueue = _runQueue.filter(x => x !== name);
     }
 
-    for(runnerName in _runners) 
-        await doRunner(runnerName, _runners[runnerName]);
-    
-    _runners = null;
-    _ran = null;
-    _runQueue = null;
+    for(const name in _runners)
+        await doRunner(name)
 
     return container;
 }
