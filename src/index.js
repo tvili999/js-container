@@ -10,6 +10,8 @@ const createContainer = async (...configurations) => {
     let initialized = false;
     let _dependencies = {};
 
+    let _configurations = [];
+
     const container = {
         async get(key) {
             if(key in _entries)
@@ -37,8 +39,7 @@ const createContainer = async (...configurations) => {
         configure(...configurations) {
             if(initialized)
                 throw "You cannot configure container after initialization";
-            for(config of configurations)
-                config(container);
+            _configurations.push(...configurations)
             return container;
         },
         run(name, runner) {
@@ -68,6 +69,10 @@ const createContainer = async (...configurations) => {
     }
 
     container.configure(...configurations);
+    while(_configurations.length > 0) {
+        const config = _configurations.pop();
+        await Promise.resolve(config(container));
+    }
 
     initialized = true;
 
