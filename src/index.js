@@ -11,6 +11,7 @@ const createContainer = async (...configurations) => {
     let _dependencies = {};
 
     let _configurations = [];
+    let _debug = false;
 
     const container = {
         async get(key) {
@@ -21,10 +22,18 @@ const createContainer = async (...configurations) => {
 
             if(_loadQueue.includes(key))
                 throw "Circular module dependency: " + _loadQueue.join(" -> ") + " -> " + key;
+
+            if(_debug)
+                console.log(`Load module: ${key}`);
+            
             _loadQueue.push(key);
             _entries[key] = await _loaders[key](container);
             _loadQueue = _loadQueue.filter(x => x !== key);
             return _entries[key];
+        },
+        debug() {
+            _debug = true;
+            return container;
         },
         inject(name, loader) {
             if(initialized)
@@ -56,10 +65,10 @@ const createContainer = async (...configurations) => {
             _runners[name] = promisize(runner);
             return container;
         },
-        dependency(group, runner) {
+        dependency(group, ...runner) {
             if(!(group in _dependencies))
                 _dependencies[group] = [];
-            _dependencies[group].push(runner);
+            _dependencies[group].push(...runner);
 
             return container;
         },
@@ -93,6 +102,9 @@ const createContainer = async (...configurations) => {
         if(name in _dependencies) 
             for(const dep of _dependencies[name])
                 await doRunner(dep);
+
+        if(_debug)
+            console.log(`Run: ${name}`);
         
         await runner(container);
 
