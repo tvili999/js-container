@@ -118,4 +118,14 @@ const createContainer = async (...configurations) => {
     return container;
 }
 
+createContainer.testContext = (name, component) => new Promise(resolve => {
+    require("js-container")(
+        component,
+        container => (container
+            .run(async ({ get }) => resolve(await get(name)))
+        )
+    )
+})
+
+
 module.exports = createContainer;
