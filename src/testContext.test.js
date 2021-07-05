@@ -1,8 +1,6 @@
-const container = require("../src/index");
+const container = require("./index");
 
-test('Passes', () => {
-    expect(true).toBe(true);
-});
+test('passes', () => { });
 
 test('Mock works', async () => {
     const randomObject = {"random": "fullyrandom"};
