@@ -9,7 +9,7 @@ module.exports = container => (...components) => new Promise(resolve => {
                 if(typeof resolver === "string")
                     resolve(await container.get(resolver))
                 else
-                    resolve(await handler(container))
+                    resolve(await resolver(container))
             })
         )
     )
