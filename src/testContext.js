@@ -1,8 +1,16 @@
-module.exports = container => (name, component) => new Promise(resolve => {
+module.exports = container => (...components) => new Promise(resolve => {
+    components = [...components];
+    const resolver = components.pop();
+
     container(
-        component,
+        ...components,
         container => (container
-            .run(async ({ get }) => resolve(await get(name)))
+            .run(async (container) => {
+                if(typeof resolver === "string")
+                    resolve(await container.get(resolver))
+                else
+                    resolve(await handler(container))
+            })
         )
     )
 })
