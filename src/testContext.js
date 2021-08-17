@@ -5,5 +5,5 @@ module.exports = container => async (...components) => {
     const app = await container(...components);
     if(typeof resolver === "string")
         return await app.get(resolver);
-    return await resolver(container);
+    return await resolver(app);
 }
