@@ -1,0 +1,21 @@
+stages:
+  - test
+  - publish
+
+test:
+  stage: test
+  image: docker.tvili999.xyz/node-ci-image:latest
+  tags:
+   - arm64
+  script:
+    - pnpm install
+    # - pnpm test
+
+publish:
+  stage: publish
+  image: docker.tvili999.xyz/node-ci-image:latest
+  tags:
+   - arm64
+  script:
+    - auth-npm-registry $NEXUS_NPM_TOKEN
+    - pnpm publish --no-git-checks
