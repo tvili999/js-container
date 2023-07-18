@@ -1,11 +1,8 @@
-const createEntries = require("./entries");
-
-global.log = () => {};
-
-test('passes', () => {});
+import { ContainerImpl } from "../createContainer";
+import Entries from "../entries";
 
 test('cannot add two loaders with the same name', async () => {
-    const entries = createEntries({});
+    const entries = new Entries(new ContainerImpl());
     entries.add('entry', () => {});
 
     expect(() => {
@@ -14,7 +11,7 @@ test('cannot add two loaders with the same name', async () => {
 })
 
 test('load value on first get', async () => {
-    const entries = createEntries({});
+    const entries = new Entries(new ContainerImpl());
 
     const symbol = Symbol()
 
@@ -23,9 +20,9 @@ test('load value on first get', async () => {
     expect(await entries.get('entry')).toBe(symbol);
 })
 test('loader gets container as first parameter', async () => {
-    const container = Symbol()
+    const container = new ContainerImpl()
 
-    const entries = createEntries(container);
+    const entries = new Entries(container);
 
     const fn = jest.fn();
     entries.add('entry', fn);
@@ -36,7 +33,7 @@ test('loader gets container as first parameter', async () => {
 })
 
 test('load value with async loader', async () => {
-    const entries = createEntries({});
+    const entries = new Entries(new ContainerImpl());
 
     const symbol = Symbol()
 
@@ -46,13 +43,13 @@ test('load value with async loader', async () => {
 })
 
 test('load the same value on second get', async () => {
-    const entries = createEntries({});
+    const entries = new Entries(new ContainerImpl());
 
-    let symbol = null;
+    let symbol: Symbol | null = null;
     entries.add('entry', () => {
         if(!symbol)
             symbol = Symbol();
-        
+
         return symbol;
     });
 
@@ -61,7 +58,7 @@ test('load the same value on second get', async () => {
 })
 
 test('loader gets called only once', async () => {
-    const entries = createEntries({});
+    const entries = new Entries(new ContainerImpl());
 
     const symbol = Symbol()
 
@@ -75,7 +72,7 @@ test('loader gets called only once', async () => {
 })
 
 test('cannot add two loaders even when one of them is already loaded', async () => {
-    const entries = createEntries({});
+    const entries = new Entries(new ContainerImpl());
     entries.add('entry', () => {});
 
     await entries.get('entry');
@@ -86,7 +83,7 @@ test('cannot add two loaders even when one of them is already loaded', async () 
 })
 
 test('cannot add two loaders even when one of them is already loaded', async () => {
-    const entries = createEntries({});
+    const entries = new Entries(new ContainerImpl());
 
     await expect(entries.get('entry'))
         .rejects
@@ -94,7 +91,7 @@ test('cannot add two loaders even when one of them is already loaded', async () 
 })
 
 test('circular dependency detection', async () => {
-    const entries = createEntries({});
+    const entries = new Entries(new ContainerImpl());
     entries.add('entry', async () => {
         await entries.get('entry');
     });
