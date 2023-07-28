@@ -36,15 +36,3 @@ export {
     Runner,
     RunnerKey
 }
-
-// for commonJS imports
-Object.assign(createContainer, {
-    logger,
-    init,
-    run,
-    inject,
-    configure,
-    dependency
-})
-
-module.exports = createContainer
