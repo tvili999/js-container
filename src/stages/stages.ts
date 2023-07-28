@@ -1,4 +1,4 @@
-import { configure, inject, run, init, Runner, RunnerKey, ModuleKey, Configurator } from "../index"
+import { configure, inject, run, init, Runner, RunnerKey, ModuleKey, Configurator } from "../index.js"
 
 type StageMap = Map<RunnerKey, Function[]>
 

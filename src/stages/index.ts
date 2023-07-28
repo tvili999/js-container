@@ -1,8 +1,5 @@
-import stage, {configureStages} from "./stages";
+import stage, {configureStages} from "./stages.js";
 
 // For ES6 imports
 export default stage
 export { configureStages }
-
-Object.assign(stage, {configureStages})
-module.exports = stage
