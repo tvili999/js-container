@@ -1,11 +1,8 @@
-const createConfigurator = require("./configurators");
-
-global.log = () => {};
-
-test('passes', () => {});
+import { ContainerImpl } from "../createContainer.js";
+import Configurators from "../configurators.js";
 
 test('configurator gets ran', async () => {
-    const configurator = createConfigurator({});
+    const configurator = new Configurators(new ContainerImpl());
 
     const fn = jest.fn();
     configurator.add(fn);
@@ -16,7 +13,7 @@ test('configurator gets ran', async () => {
 });
 
 test('multiple configurators get ran', async () => {
-    const configurator = createConfigurator({});
+    const configurator = new Configurators(new ContainerImpl());
 
     const fn1 = jest.fn();
     const fn2 = jest.fn();
@@ -30,8 +27,8 @@ test('multiple configurators get ran', async () => {
 });
 
 test('configurator gets ran', async () => {
-    const container = Symbol();
-    const configurator = createConfigurator(container);
+    const container = new ContainerImpl();
+    const configurator = new Configurators(container);
 
     const fn = jest.fn();
     configurator.add(fn);

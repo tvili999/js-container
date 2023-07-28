@@ -1,11 +1,8 @@
-const createRunner = require("./runners");
-
-global.log = () => {};
-
-test('passes', () => {});
+import { ContainerImpl } from "../createContainer";
+import Runners from "../runners";
 
 test('cannot add two runners with the same name', () => {
-    const runner = createRunner({});
+    const runner = new Runners(new ContainerImpl());
 
     runner.add("entry", () => {});
     expect(() => {
@@ -14,7 +11,7 @@ test('cannot add two runners with the same name', () => {
 })
 
 test('runner runs', async () => {
-    const runner = createRunner({});
+    const runner = new Runners(new ContainerImpl());
 
     const testRunner = jest.fn();
 
@@ -25,20 +22,20 @@ test('runner runs', async () => {
 })
 
 test('runner gets container as parameter', async () => {
-    const container = Symbol();
-    
-    const runner = createRunner(container);
+    const container = new ContainerImpl();
+
+    const runner = new Runners(container);
 
     const fn = jest.fn();
     runner.add('runner', fn);
 
     await runner.run('runner');
     expect(fn.mock.calls.length).toBe(1);
-    expect(fn.mock.calls[0][0]).toBe(container);    
+    expect(fn.mock.calls[0][0]).toBe(container);
 })
 
 test('async runner runs', async () => {
-    const runner = createRunner({});
+    const runner = new Runners(new ContainerImpl());
 
     const testRunner = jest.fn();
     runner.add('runner', async () => testRunner());
@@ -48,7 +45,7 @@ test('async runner runs', async () => {
 })
 
 test('non existing runner throws error', async () => {
-    const runner = createRunner({});
+    const runner = new Runners(new ContainerImpl());
 
     expect(runner.run('runner'))
         .rejects
@@ -56,7 +53,7 @@ test('non existing runner throws error', async () => {
 })
 
 test('runner runs only once', async () => {
-    const runner = createRunner({});
+    const runner = new Runners(new ContainerImpl());
 
     const testRunner = jest.fn();
 
@@ -68,7 +65,7 @@ test('runner runs only once', async () => {
 })
 
 test('dependsOn dependency', async () => {
-    const runner = createRunner({});
+    const runner = new Runners(new ContainerImpl());
 
     const testRunner1 = jest.fn();
     const testRunner2 = jest.fn();
@@ -86,7 +83,7 @@ test('dependsOn dependency', async () => {
 })
 
 test('dependentBy dependency', async () => {
-    const runner = createRunner({});
+    const runner = new Runners(new ContainerImpl());
 
     const testRunner1 = jest.fn();
     const testRunner2 = jest.fn();
@@ -104,7 +101,7 @@ test('dependentBy dependency', async () => {
 })
 
 test('circular dependency detection', async () => {
-    const runner = createRunner({});
+    const runner = new Runners(new ContainerImpl());
 
     runner.add('runner1', () => {});
     runner.add('runner2', () => {});
@@ -121,7 +118,7 @@ test('circular dependency detection', async () => {
 })
 
 test('runner running all runners', async () => {
-    const runner = createRunner({});
+    const runner = new Runners(new ContainerImpl());
 
     const testRunner1 = jest.fn();
     const testRunner2 = jest.fn();
@@ -136,7 +133,7 @@ test('runner running all runners', async () => {
 })
 
 test('runner gets added with generated name', async () => {
-    const runner = createRunner({});
+    const runner = new Runners(new ContainerImpl());
 
     const testRunner = jest.fn();
 
