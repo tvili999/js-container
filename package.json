@@ -2,22 +2,18 @@
     "name": "@tvili999/js-container",
     "version": "3.0.0",
     "license": "MIT",
-    "main": "./lib/index.js",
     "files": [
         "lib",
         "package.json"
     ],
-    "type": "module",
-    "types": "./lib/index.d.ts",
     "exports": {
-        ".": "./lib/index.js",
-        "./stages": "./lib/stages/index.js"
-    },
-    "typesVersions": {
-        "*": {
-            "stages": [
-                "./lib/stages/index.d.ts"
-            ]
+        ".": {
+            "types": "./lib/index.d.ts",
+            "require": "./lib/index.js"
+        },
+        "./stages": {
+            "types": "./lib/stages/index.d.ts",
+            "require": "./lib/stages/index.js"
         }
     },
     "scripts": {
