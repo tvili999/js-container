@@ -52,8 +52,7 @@ export default configure(
     ]),
     stage("expressStages", "config", async ({get}) => {
         const app = await get("server")
-
-        app.listen(8080)
+        app.use(bodyParser.json())
     }),
     stage("expressStages", "listen", async ({get}) => {
         const app = await get("server")

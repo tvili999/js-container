@@ -8,7 +8,7 @@ You can simply export your inject and run configurations.
 
 ```js
 // moduleA.js
-import { configure } from "@tvili999/js-container"
+import { inject } from "@tvili999/js-container"
 export default inject("module:a", async () => {
     return {
         text: "Module A"
@@ -18,7 +18,7 @@ export default inject("module:a", async () => {
 
 ```js
 // runner.js
-import { configure } from "@tvili999/js-container"
+import { run } from "@tvili999/js-container"
 export default run(async ({get}) => {
     const moduleA = await get("module:a");
 
