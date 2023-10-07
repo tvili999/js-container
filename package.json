@@ -1,6 +1,6 @@
 {
     "name": "@tvili999/js-container",
-    "version": "3.0.0",
+    "version": "3.1.3",
     "license": "MIT",
     "files": [
         "lib",
@@ -14,10 +14,14 @@
         "./stages": {
             "types": "./lib/stages/index.d.ts",
             "require": "./lib/stages/index.js"
+        },
+        "./decorators": {
+            "types": "./lib/decorators/index.d.ts",
+            "require": "./lib/decorators/index.js"
         }
     },
     "scripts": {
-        "build": "rimraf lib/* && tsc",
+        "build": "rimraf lib/* && tsc -p tsconfig.build.json",
         "test": "jest",
         "test:watch": "jest --watch"
     },

@@ -1,42 +1,40 @@
-import stages, { configureStages } from "../stages"
+import stages, { configureStages } from "../stages";
 import createContainer from "../../createContainer";
-import sinon from "sinon"
+import sinon from "sinon";
 
-test('configuration passes', async () => {
-    const TEST_STAGES = ["a", "b"]
-    const TEST_KEY = "stages"
+test("configuration passes", async () => {
+  const TEST_STAGES = ["a", "b"];
+  const TEST_KEY = "stages";
 
-    await createContainer(
-        configureStages(TEST_KEY, TEST_STAGES)
-    )
+  await createContainer(configureStages(TEST_KEY, TEST_STAGES));
 });
 
-test('runs stage with correct argument', async () => {
-    const TEST_STAGES = ["a", "b"]
-    const TEST_KEY = "stages"
+test("runs stage with correct argument", async () => {
+  const TEST_STAGES = ["a", "b"];
+  const TEST_KEY = "stages";
 
-    const stub = sinon.stub()
+  const stub = sinon.stub();
 
-    const container = await createContainer(
-        configureStages(TEST_KEY, TEST_STAGES),
-        stages(TEST_KEY, TEST_STAGES[0], stub)
-    )
+  const container = await createContainer(
+    configureStages(TEST_KEY, TEST_STAGES),
+    stages(TEST_KEY, TEST_STAGES[0], stub),
+  );
 
-    expect(stub.calledWith(container)).toBe(true)
+  expect(stub.calledWith(container)).toBe(true);
 });
 
-test('runs stage in correct order', async () => {
-    const TEST_STAGES = ["a", "b"]
-    const TEST_KEY = "stages"
+test("runs stage in correct order", async () => {
+  const TEST_STAGES = ["a", "b"];
+  const TEST_KEY = "stages";
 
-    const stubA = sinon.stub()
-    const stubB = sinon.stub()
+  const stubA = sinon.stub();
+  const stubB = sinon.stub();
 
-    const container = await createContainer(
-        configureStages(TEST_KEY, TEST_STAGES),
-        stages(TEST_KEY, TEST_STAGES[0], stubA),
-        stages(TEST_KEY, TEST_STAGES[1], stubB),
-    )
+  const container = await createContainer(
+    configureStages(TEST_KEY, TEST_STAGES),
+    stages(TEST_KEY, TEST_STAGES[0], stubA),
+    stages(TEST_KEY, TEST_STAGES[1], stubB),
+  );
 
-    sinon.assert.callOrder(stubA, stubB)
+  sinon.assert.callOrder(stubA, stubB);
 });

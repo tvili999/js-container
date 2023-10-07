@@ -18,9 +18,10 @@
         "skipLibCheck": true,
         "strict": true,
         "traceResolution": false,
-        "types": ["node", "jest"]
+        "types": ["node", "jest"],
+        "experimentalDecorators": true,
     },
     "compileOnSave": false,
-    "exclude": ["node_modules", "lib", "src/**/*.test.ts"],
+    "exclude": ["node_modules", "lib"],
     "include": ["src"]
 }
