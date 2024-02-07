@@ -4,24 +4,29 @@
     "license": "MIT",
     "files": [
         "lib",
+        "esm",
         "package.json"
     ],
     "exports": {
         ".": {
             "types": "./lib/index.d.ts",
-            "require": "./lib/index.js"
+            "require": "./lib/index.js",
+            "import": "./esm/index.js"
         },
         "./stages": {
             "types": "./lib/stages/index.d.ts",
-            "require": "./lib/stages/index.js"
+            "require": "./lib/stages/index.js",
+            "import": "./esm/stages/index.js"
         },
         "./decorators": {
             "types": "./lib/decorators/index.d.ts",
-            "require": "./lib/decorators/index.js"
+            "require": "./lib/decorators/index.js",
+            "import": "./esm/decorators/index.js"
         }
     },
     "scripts": {
         "build": "rimraf lib/* && tsc -p tsconfig.build.json",
+        "build:esm": "rimraf esm/* && tsc -p tsconfig.esm.json",
         "test": "jest",
         "test:watch": "jest --watch"
     },
